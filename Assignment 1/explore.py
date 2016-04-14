@@ -104,3 +104,49 @@ def plot_birth_months():
     ax.xaxis.set_minor_locator(ticker.FixedLocator([i + 0.415 for i in range(1, 13)]))
     ax.xaxis.set_minor_formatter(ticker.FixedFormatter([str(l) for l in range(1, 13)]))
     plt.show()
+
+def parse_programme():
+    counts = Counter()
+    programmes = []
+    programme_map = {"Master": "Other", "MS": "Other", "neuroscience": "Other",
+                     "Exchange": "Other", "drug discovery and safety": "Other",
+                     "GSEEM": "Other",
+                     "Information Sciences": "Other",
+                     "Math": "Other",
+                     "Business Administration": "BA",
+                     "Operations Research": "EOR",
+                     "Operations Research and Business Econometrics": "EOR",
+                     "Econometrics and Operations Research": "EOR",
+                     "Computational Science": "CLS",
+                     "Quantitative risk management": "QRM",
+                     "Econometrics": "ECO",
+                     "Bioinformatics": "BIO",
+
+                     "Math / Computational Science": "CLS",
+                     "Econometrics / Quantitative risk management": "ECO",
+                     "BA / Econometrics": "BA"}
+    for p in programme:
+        if '/' in p:
+            ps = [x.strip() for x in p.split('/')]
+        else:
+            ps = [p]
+
+        for x in ps:
+            counts[programme_map.get(x, x)] += 1
+
+    for p in programme:
+        programmes.append(programme_map.get(p, p))
+    return counts, programmes
+
+def programme_chart():
+    counts, = parse_programme()
+    counts = list(counts.items())
+    labels, c = zip(*counts)
+
+    colors = ("#b58900", "#cb4b16", "#dc322f", "#002b36", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900")
+    plt.pie(c, labels=labels, colors=colors)
+    plt.title("Programme Chart")
+    plt.savefig("programme_pie", dpi=400)
+
+
+_, programmes = parse_programme()
