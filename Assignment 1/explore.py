@@ -18,9 +18,29 @@ def load_data():
     data = data[:-1]            # excluding empty line
     return data
 
+def parse_course(data, t, f):
+    true_list = ["Yes", "yes", "y","Y", t]
+    false_list = ["No", "no", "n","N", f]
+    pData = []
+    for d in range(len(data)):
+        if (data[d] in true_list):
+            pData.append(True)
+        elif (data[d] in false_list):
+            pData.append(False)
+        else:
+            pData.append(None)
+    return pData
+
+
 data = load_data()
 (programme, ml, ir, st, db, gender, chocolate, birthday, neighbours, stand,
  stress, money, random, bedtime, good_day1, good_day2) = zip(*data)
+
+mlp = parse_course(ml,"y","n")
+irp = parse_course(ir,"1","0")
+stp = parse_course(st,"mu","sigma")
+dbp = parse_course(db,"j","n")
+genderp = parse_course(gender,"m","f")
 
 npeople = len(data)                       # => 129
 
