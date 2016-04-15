@@ -2,7 +2,7 @@ from __future__ import division
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import *
 from collections import Counter
 from sklearn import cross_validation, metrics
 from sklearn.cross_validation import train_test_split
@@ -10,9 +10,13 @@ from sklearn.cross_validation import train_test_split
 # fill the NaN-values in the given column with the non-NaN-median
 def fillMedian(df, col, medianGiven = None):
     if medianGiven is None:
-        df[col] = df[col].fillna(df[col].median())
+        median = df[col].median()
     else:
-        df[col] = df[col].fillna(medianGiven)
+        median = medianGiven
+
+    df[col] = df[col].fillna(median)
+
+    return median
 
 # fill the NaN-values in the given column with the non-NaN-median matrix 
 # separated by (sex, pclass)
@@ -73,6 +77,7 @@ fillColumn(dft, 'Age', 0, mediansAge)
 mediansFare = fillColumn(df, 'Fare', 0)
 fillColumn(dft, 'Fare', 0, mediansFare)
 
+
 # fill the missing embarked values with the most-occuring value
 fillColumn(df, 'Embarked', 2, sorted(Counter(df['Embarked'].values).items(), key=lambda x: x[1])[-1][0])
 
@@ -90,27 +95,25 @@ predictors = ['Pclass', 'SibSp', 'Parch', 'Sex', 'Age', 'Fare', 'Embarked', 'Fam
 
 """ Training phase """
 
-traindata = df[predictors].values
-targets = df.Survived
+traindata = df[predictors].values.astype(float)
+targets = df.Survived.astype(float)
 
 Xtr, Xte, ytr, yte = train_test_split( traindata, targets, test_size = 1/3, random_state=42)
-print 
 
 # train classifier
-forest = RandomForestClassifier(n_estimators = 100)
-"""
-scores = cross_validation.cross_val_score(forest, df[predictors].values, df.Survived, cv=5)
-print scores.mean()
-"""
+#forest = RandomForestClassifier(n_estimators = 100)
+forest = GradientBoostingClassifier(random_state=1, n_estimators=25, max_depth=3)
 
 forest.fit(Xtr, ytr)
-predictions = forest.predict(Xte)
+predictions = (forest.predict_proba(Xte.astype(float))[:,1] > 0.5).astype(int)
 print metrics.classification_report(yte, predictions)
 
 """ Testing phase """
 
+forest.fit(traindata, targets)
+
 # predict final output
-output = forest.predict(dft[predictors].values)
+output = forest.predict_proba(dft[predictors].astype(float))[:,1]
 output = (output > 0.5).astype(int)
 
 submission = pd.DataFrame({ 'PassengerId': dft['PassengerId'], 'Survived': output });

@@ -30,32 +30,21 @@ for i, row in enumerate(featurematrix):
         targets.append(targetcol[i])
 
 nsamples = len(targets)
-Xtr, Xte, ytr, yte = train_test_split( data, targets, test_size = 1/3, random_state=42)
+scores_1 = [0]*10
+scores_2 = [0]*10
+for i in range(10):
+    Xtr, Xte, ytr, yte = train_test_split( data, targets, test_size = 1/3, random_state=i)
 
 
-classifiers = [
-    DecisionTreeClassifier(max_depth=5),
-    KNeighborsClassifier(3),
-    SVC(kernel="linear", C=0.025),
-    SVC(gamma=2, C=1),
-    RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
-    AdaBoostClassifier(),
-    GaussianNB() ]
-
-for clf in classifiers:
-    print clf
+    clf = GridSearchCV(DecisionTreeClassifier(), {"max_depth": range(1, 15)}, cv=5)
     clf.fit(Xtr, ytr)
-    print clf.score(Xte, yte)
+    print clf.best_params_
+    scores_1[i] = clf.score(Xte, yte)
 
-#use decision tree and SVM with crossvalidation to find better results
+    param_grid = {'C': [1e1, 1e2, 1e3, 1e4, 1e5], 'gamma': [1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]}
+    clf = GridSearchCV(SVC(kernel="rbf"), param_grid, cv=5)
+    clf.fit(Xtr, ytr)
+    print clf.best_params_
+    scores_2[i] = clf.score(Xte, yte)
 
-clf = GridSearchCV(DecisionTreeClassifier(), {"max_depth": range(1, 15)}, cv=5)
-clf.fit(Xtr, ytr)
-print clf.best_params_
-print clf.score(Xte, yte)
-
-param_grid = {'C': [1e1, 1e2, 1e3, 1e4, 1e5], 'gamma': [1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]}
-clf = GridSearchCV(SVC(kernel="rbf"), param_grid, cv=5)
-clf.fit(Xtr, ytr)
-print clf.best_params_
-print clf.score(Xte, yte)
+print sum(scores_1)/10, sum(scores_2)/10
