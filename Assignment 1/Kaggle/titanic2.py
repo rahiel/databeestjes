@@ -19,7 +19,7 @@ from sklearn.cross_validation import train_test_split
 
 # classifiers
 from sklearn.ensemble import *
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.svm import SVC, LinearSVC
 
 # fill the NaN-values in the given column with the non-NaN-median
@@ -96,21 +96,6 @@ convertToInt(dft, 'Sex', dctSex)
 dctEmb = convertToInt(df, 'Embarked')
 convertToInt(dft, 'Embarked', dctEmb)
 
-"""
-dfage = df[['Pclass', 'SibSp', 'Parch', 'Sex', 'Age', 'Fare']].dropna()
-clf_age = DecisionTreeClassifier(max_depth=5)
-clf_age.fit(dfage[['Pclass', 'SibSp', 'Parch', 'Sex', 'Fare']].values.astype(float), dfage['Age'].astype(float))
-clf_age.predict(
-"""
-
-# fill Age and Fare NaN-values
-mediansAge = fillColumn(df, 'Age', 1)
-fillColumn(df, 'Age', 1, mediansAge)
-fillColumn(dft, 'Age', 1, mediansAge)
-mediansFare = fillColumn(df, 'Fare', 1)
-fillColumn(df, 'Fare', 1, mediansFare)
-fillColumn(dft, 'Fare', 1, mediansFare)
-
 # add the Title column
 titles = {
     "Mr": 0, 
@@ -136,6 +121,31 @@ titles = {
 df["Title"] = df.Name.apply(lambda x: titles[x.replace('.', ',').split(',')[1].strip()])
 dft["Title"] = dft.Name.apply(lambda x: titles[x.replace('.', ',').split(',')[1].strip()])
 
+# fill Age and Fare NaN-values
+mediansFare = fillColumn(df, 'Fare', 1)
+fillColumn(df, 'Fare', 1, mediansFare)
+fillColumn(dft, 'Fare', 1, mediansFare)
+
+mediansAge = fillColumn(df, 'Age', 1)
+fillColumn(df, 'Age', 1, mediansAge)
+fillColumn(dft, 'Age', 1, mediansAge)
+"""
+bins = [5, 15, 30, 45]
+df['AgeBinned'] = np.digitize(df.Age, bins)
+dft['AgeBinned'] = np.digitize(dft.Age, bins)
+"""
+
+"""
+df2 = df[['Age', 'Pclass', 'Sex', 'Fare', 'Title']]
+dft2 = dft[['Age', 'Pclass', 'Sex', 'Fare', 'Title']]
+df_age = df2.dropna()
+df_age2 = df_age.drop(['Age'], axis=1)
+age_clf = DecisionTreeRegressor()
+age_clf.fit(df_age2.values, df_age['Age'].values)
+df.Age = age_clf.predict(df2.drop(['Age'], axis=1))
+dft.Age = age_clf.predict(dft2.drop(['Age'], axis=1))
+"""
+
 # fill the missing embarked values with the most-occuring value
 fillColumn(df, 'Embarked', 2, sorted(Counter(df['Embarked'].values).items(), key=lambda x: x[1])[-1][0])
 
@@ -143,7 +153,7 @@ df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
 dft['FamilySize'] = dft['SibSp'] + dft['Parch'] + 1
 
 # choose which columns to predict with
-predictors = ['Pclass', 'SibSp', 'Parch', 'Sex', 'Age', 'Fare', 'Title']
+predictors = ['Pclass', 'FamilySize', 'Age', 'Sex', 'Fare', 'Title']
 
 
 """ 
@@ -153,11 +163,11 @@ Training phase
 classifiers = [
     [RandomForestClassifier(), 
      {"n_estimators": [100, 200, 500], "max_depth": [2, 3, 5, 8]}], 
-    [GradientBoostingClassifier(), 
-     {"n_estimators": [100, 200, 500], "max_depth": [2, 3, 5, 8]}],
-    [DecisionTreeClassifier(), {"max_depth": [2, 3, 5, 8]}],
-    [SVC(), 
-     {'C': [1e-1, 1e1, 1e2], 'gamma': ['auto', 1e-3, 1e-2, 1e-1]}],
+    #[GradientBoostingClassifier(), {"n_estimators": [100, 200, 500], "max_depth": [2, 3, 5, 8]}],
+    #[DecisionTreeClassifier(), {"max_depth": [2, 3, 5, 8]}],
+    #[SVC(), {'C': [1e-1, 1e1, 1e2], 'gamma': ['auto', 1e-3, 1e-2, 1e-1]}],
+    #[LinearSVC(), {"loss": ["hinge", "squared_hinge"]}],
+    #[AdaBoostClassifier(), {"n_estimators": [100, 200, 500], "learning_rate": [0.1, 0.5, 1.0]}]
 ]
 
 nrepeat = 1
@@ -182,6 +192,7 @@ for rs in range(nrepeat):
 best_classifier = np.argmax(np.mean(results, axis=1))
 best_model = estimators[best_classifier, np.argmax(results, axis=1)[best_classifier]]
 print "estimated score: ", np.mean(results, axis=1)[best_classifier], " model: ", best_model
+print best_model.feature_importances_
 
 
 """
@@ -200,3 +211,6 @@ print np.mean(output1 - output2)
 submission = pd.DataFrame({ 'PassengerId': dft['PassengerId'], 'Survived': output1 });
 
 submission.to_csv('model_%f.csv' % np.max(np.mean(results, axis=1)), index=False)
+
+import seaborn as sns
+sns.barplot(x=predictors, y=best_model.feature_importances_)
