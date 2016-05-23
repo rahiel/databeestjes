@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 nrows = 1E5
-train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, nrows=nrows)
+train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, nrows=nrows, parse_dates=[1])
 nrows = train.shape[0]
 
 # create a nice plot with x-axis the features, and y-axis the percentage of missing data
@@ -25,6 +25,9 @@ def barplot():
     plt.subplots_adjust(bottom=0.4)
     plt.show()
 
+def dateplot():
+    pass
+
 def summarize():
     num_queries = len(train.srch_id.unique())
     num_hotel_countries = len(train.prop_country_id.unique())
@@ -36,4 +39,4 @@ def summarize():
     return num_queries, num_hotel_countries, num_hotels, num_visitor_countries
 
 
-barplot()
+dateplot()

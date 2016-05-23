@@ -7,8 +7,7 @@ import pandas as pd
 
 from sklearn.ensemble import RandomForestClassifier
 
-
-nrows = 1E6
+nrows = int(1E5)
 data = pd.read_csv("training_set_VU_DM_2014.csv", header=0, nrows=2 * nrows)
 train = data[:nrows]
 test = data[nrows:]
