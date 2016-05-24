@@ -7,7 +7,8 @@ import pandas as pd
 
 from sklearn.ensemble import RandomForestClassifier
 
-nrows = int(1E5)
+
+nrows = int(1E6)
 data = pd.read_csv("training_set_VU_DM_2014.csv", header=0, nrows=2 * nrows)
 train = data[:nrows]
 test = data[nrows:]
@@ -31,4 +32,4 @@ classifier = RandomForestClassifier(n_estimators=30)
 
 classifier.fit(features, target)
 
-classifier.predict_proba(test[feature_labels].values)
+predictions = classifier.predict_proba(test[feature_labels].values)[:, 1]
