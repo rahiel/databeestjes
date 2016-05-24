@@ -1,5 +1,6 @@
 from __future__ import division
 
+from collections import Counter
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -25,8 +26,21 @@ def barplot():
     plt.subplots_adjust(bottom=0.4)
     plt.show()
 
-def dateplot():
-    pass
+months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+def name(x):
+    if x[2] == 1:
+        return '%s 1, %d' % (months[x[1]], x[0])
+    else:
+        return ''
+dates = [(a.year, a.month, a.day) for a in train.date_time]
+c = sorted(Counter(dates).items(), key=lambda kv: kv[0][0]*10000 + kv[0][1]*100 + kv[0][2])
+datesort = [kv[0][0]*10000 + kv[0][1]*100 + kv[0][2] for kv in c]
+names = [name(x) for x,y in c]
+fig, ax = plt.subplots()
+#plt.hist([y for x,y in c], bins=len(c), )
+sns.barplot(datesort, [y for x,y in c])
+ax.set_xticklabels(names)
+plt.show()
 
 def summarize():
     num_queries = len(train.srch_id.unique())

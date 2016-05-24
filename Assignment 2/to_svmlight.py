@@ -48,4 +48,4 @@ comment = ' '.join(map(lambda t: '%d:%s' % t, zip(range(len(feature_labels)), fe
 
 dump_svmlight_file(Xtr, ytr, 'spelen/train.svmlight', query_id = qtr, comment=comment)
 dump_svmlight_file(Xva, yva, 'spelen/vali.svmlight', query_id = qva, comment=comment)
-dump_svmlight_file(Xva, np.zeros(len(data_test)), 'spelen/test.svmlight', query_id = qva, comment=comment)
+dump_svmlight_file(Xva, np.zeros(len(data_test)), 'spelen/test.svmlight', query_id = qte, comment=comment)

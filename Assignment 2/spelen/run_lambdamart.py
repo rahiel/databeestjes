@@ -62,13 +62,8 @@ model.save('LambdaMART_L7_S0.1_E50_' + model.metric)
 predicted_rankings = model.predict_rankings(test_queries)
 
 test_df = pd.read_csv("../test_set_VU_DM_2014.csv", header=0, nrows = test_queries.document_count())
-#test_df['pred_position'] = np.concatenate(predicted_rankings)
-#sorted_df = test_df[['srch_id', 'prop_id', 'pred_position']].sort_values(['srch_id', 'pred_position'])
+test_df['pred_position'] = np.concatenate(predicted_rankings)
+sorted_df = test_df[['srch_id', 'prop_id', 'pred_position']].sort_values(['srch_id', 'pred_position'])
 
-#this next bit sorts the dataframe..it may be a lot easier with df.sort() though
-fliep = [[(rank, qid) for rank in v] for (qid,v) in zip(test_queries.query_ids, predicted_rankings)]
-fliep_flattened = [f for sf in fliep for f in sf]
-fliep_sortkey = [rank + 100*qid for (rank, qid) in fliep_flattened]
-final = [x[1] for x in sorted(zip(fliep_sortkey, test_df[['srch_id', 'prop_id']].values), key=lambda x: x[0])]
-
-#MAN it doesnt work!
+submission = pd.DataFrame({ 'SearchId': sorted_df.srch_id, 'PropertyId': sorted_df.prop_id })[['SearchId', 'PropertyId']]
+submission.to_csv('model_%d_%f.csv' % (test_queries.document_count(), model.evaluate(validation_queries, n_jobs=-1)), index=False)
