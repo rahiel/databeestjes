@@ -41,18 +41,9 @@ def dateplot():
     datesort = [kv[0][0]*10000 + kv[0][1]*100 + kv[0][2] for kv in c]
     names = [name(x) for x,y in c]
     fig, ax = plt.subplots()
-    #plt.hist([y for x,y in c], bins=len(c), )
-    palette = ["#ffffff","#cfffff","#9fffff","#70f3ff","#43c3ff","#1694ff","#0065e7","#0038b7","#000b88","#00005a","#00002d","#000000"]
-    palette =["black","green","red","blue","magenta","gray","lightblue","lime","pink","yellow","peachpuff","lightsalmon"]
     palette = sns.color_palette(n_colors=12)
-    print([d[0][1]-1 for d in c])
     clrs = [palette[d[0][1]-1] for d in c]
-    # colors = [ for p in palette]
-    # print(clrs[:3])
-    index = np.arange(len(datesort))
     sns.barplot(datesort, [y for x,y in c], palette = clrs)
-    # sns.bar(datesort, [y for x,y in c], color=clrs)
-    ax.set_ticksize(5)
     ax.set_xticklabels(names)
     plt.show()
 
