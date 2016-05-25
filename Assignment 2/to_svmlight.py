@@ -1,5 +1,7 @@
 from __future__ import division
 
+from multiprocessing import Pool
+
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -7,6 +9,7 @@ import pandas as pd
 from sklearn.datasets import dump_svmlight_file
 
 from sklearn.ensemble import RandomForestClassifier
+
 
 def preprocess(df):
     d = df.isnull().sum().to_dict()
@@ -36,25 +39,30 @@ def preprocess(df):
 
     return dd, features, qid, target, feature_labels
 
-#data_train = pd.read_csv("training_set_VU_DM_2014.csv", header=0)
-data_test = pd.read_csv("test_set_VU_DM_2014.csv", header=0)
-"""
-print "loaded 0"
+
+data_train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, nrows=nrows)
+data_test = pd.read_csv("test_set_VU_DM_2014.csv", header=0, nrows=nrows)
+print("loaded csv's")
 train, Xtr, qtr, ytr, feature_labels = preprocess(data_train[data_train.srch_id % 10 != 0])
-print "loaded 1"
+print("preprocessed training data")
 vali, Xva, qva, yva, feature_labels = preprocess(data_train[data_train.srch_id % 10 == 0])
-print "loaded 2"
-"""
+print("preprocessed validation data")
 test, Xte, qte, yte, feature_labels = preprocess(data_test)
-print "loaded files"
+print("preprocessed test data")
+
+# dump_svmlight_file(Xtr, ytr, 'spelen/train.svmlight', query_id=qtr, comment=comment)
+# dump_svmlight_file(Xva, yva, 'spelen/vali.svmlight', query_id=qva, comment=comment)
+# dump_svmlight_file(Xte, np.zeros(len(data_test)), 'spelen/test.svmlight', query_id=qte, comment=comment)
 
 comment = ' '.join(map(lambda t: '%d:%s' % t, zip(range(len(feature_labels)), feature_labels)))
 
-"""
-dump_svmlight_file(Xtr, ytr, 'spelen/train.svmlight', query_id = qtr, comment=comment)
-print "loaded files"
-dump_svmlight_file(Xva, yva, 'spelen/vali.svmlight', query_id = qva, comment=comment)
-print "loaded files"
-"""
-dump_svmlight_file(Xte, np.zeros(len(data_test)), 'spelen/test.svmlight', query_id = qte, comment=comment)
-print "loaded files"
+
+def dump(args):
+    """Dumps to svmlight format."""
+    x, y, filename, query_id, comment = args
+    dump_svmlight_file(x, y, filename, query_id=query_id, comment=comment)
+
+p = Pool()
+p.map(dump, ((Xtr, ytr, 'spelen/train.svmlight', qtr, comment),
+             (Xva, yva, 'spelen/vali.svmlight', qva, comment),
+             (Xte, np.zeros(len(data_test)), 'spelen/test.svmlight', qte, comment)))
