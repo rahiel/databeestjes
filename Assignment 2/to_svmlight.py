@@ -44,7 +44,12 @@ def preprocess(df):
     df["count_window"] = df["srch_room_count"] * max(df["srch_booking_window"]) + df["srch_booking_window"]
     feature_labels.append("count_window")
 
-    # split timestamp into month, day etc. TODO
+    # month, week, day of the week and hour of search
+    df["month"] = [df["date_time"].iloc[i].month for i in range(len(df))]       # jan: 1, dec:12
+    df["week"] = [df["date_time"].iloc[i].week for i in range(len(df))]         # weeks from 1 - 52/53
+    df["day"] = [df["date_time"].iloc[i].isoweekday() for i in range(len(df))]  # mon: 1, sun:7
+    df["hour"] = [df["date_time"].iloc[i].hour for i in range(len(df))]         # range(24)
+    feature_labels += ["month", "week", "day", "hour"]
     feature_labels.remove("date_time")
 
     # avg, mean, std per hotel. from 1st place leaderboard TODO
