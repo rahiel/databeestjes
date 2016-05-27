@@ -25,12 +25,10 @@ def preprocess(df):
         train = True
         remove += ["position", "click_bool", "booking_bool", "gross_bookings_usd"]  # training set only
 
+    remove += ["srch_id", "prop_id"]
+
     for l in remove:
         feature_labels.remove(l)
-
-    # fill missing values with worst case scenario. Source: Jun Wang 3rd place
-    # ["prop_review_score", "prop_location_score2", "orig_destination_distance"]
-    df = df.fillna(value=-1)
 
     # outliers in hotel price, hotels with price > 10000 are removed from training set. Source: David Wind
     if train:
@@ -52,7 +50,10 @@ def preprocess(df):
     feature_labels += ["month", "week", "day", "hour"]
     feature_labels.remove("date_time")
 
-    # avg, mean, std per hotel. from 1st place leaderboard TODO
+    # sanitize prop_log_historical_price
+    df["prop_historical_price"] = (np.e ** df["prop_log_historical_price"]).replace(1.0, 10000)
+    feature_labels.append("prop_historical_price")
+    feature_labels.remove("prop_log_historical_price")
 
     features = df[feature_labels].values
     qid = df['srch_id'].values
@@ -66,6 +67,28 @@ def preprocess(df):
 data_train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, parse_dates=[1])
 data_test = pd.read_csv("test_set_VU_DM_2014.csv", header=0, parse_dates=[1])
 print("loaded csv's")
+
+# fill missing values with worst case scenario. Source: Jun Wang 3rd place
+# ["prop_review_score", "prop_location_score2", "orig_destination_distance"]
+data_train = data_train.fillna(value=-1)
+data_test = data_test.fillna(value=-1)
+
+# feature engineering using all numeric features
+# avg/median/std numeric features per prop_id
+numeric_features = ["prop_starrating", "prop_review_score", "prop_location_score1", "prop_location_score2"]
+all_data = pd.concat([data_train, data_test], copy=False)
+
+for label in numeric_features:
+    mean = all_data.groupby("prop_id")[label].mean()
+    median = all_data.groupby("prop_id")[label].median()
+    std = all_data.groupby("prop_id")[label].std()
+
+    for d in (data_train, data_test):
+        d[label + "_mean"] = mean[d.prop_id].values
+        d[label + "_median"] = median[d.prop_id].values
+        d[label + "_mean"] = std[d.prop_id].values
+
+
 train, Xtr, qtr, ytr, feature_labels = preprocess(data_train[data_train.srch_id % 10 != 0])
 print("preprocessed training data")
 vali, Xva, qva, yva, feature_labels = preprocess(data_train[data_train.srch_id % 10 == 0])
