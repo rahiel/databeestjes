@@ -63,7 +63,8 @@ def preprocess(df, train):
     return df, features, qid, target, feature_labels
 
 
-nrows = None # int(1e5)
+nrows = None
+# nrows = int(1e5)
 data_train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, parse_dates=[1], nrows=nrows)
 try:
     data_test = pd.read_csv("testsetnew.csv", header=0, parse_dates=[1], nrows=nrows)
@@ -83,9 +84,9 @@ numeric_features = ["prop_starrating", "prop_review_score", "prop_location_score
 all_data = pd.concat([data_train, data_test], copy=False)
 
 for label in numeric_features:
-    mean = all_data.groupby("prop_id")[label].mean()
-    median = all_data.groupby("prop_id")[label].median()
-    std = all_data.groupby("prop_id")[label].std()
+    mean = all_data.groupby("prop_id")[label].mean().fillna(value=-1)
+    median = all_data.groupby("prop_id")[label].median().fillna(value=-1)
+    std = all_data.groupby("prop_id")[label].std().fillna(value=-1)
 
     for d in (data_train, data_test):
         d[label + "_mean"] = mean[d.prop_id].values
