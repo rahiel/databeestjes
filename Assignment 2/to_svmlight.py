@@ -59,7 +59,7 @@ def preprocess(df):
 
 
 data_train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, parse_dates=[1])
-data_test = pd.read_csv("test_set_VU_DM_2014.csv", header=0, parse_dates=[1])
+data_test = pd.read_csv("testsetnew.csv", header=0, parse_dates=[1])
 print("loaded csv's")
 train, Xtr, qtr, ytr, feature_labels = preprocess(data_train[data_train.srch_id % 10 != 0])
 print("preprocessed training data")
@@ -75,7 +75,7 @@ comment = ' '.join(map(lambda t: '%d:%s' % t, zip(range(len(feature_labels)), fe
 def dump(args):
     """Dumps to svmlight format."""
     x, y, filename, query_id, comment = args
-    dump_svmlight_file(x, y, filename, query_id=query_id, comment=comment)
+    dump_svmlight_file(x, y, filename, query_id=query_id, comment=comment, zero_based=False)
 
 p = Pool()
 # dump_svmlight_file(Xtr, ytr, 'spelen/train.svmlight', query_id=qtr, comment=comment)
