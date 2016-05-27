@@ -52,11 +52,11 @@ model = LambdaMART(metric='nDCG@38', max_leaf_nodes=7, shrinkage=0.1,
                    random_state=42)
 
 #TODO: do some crossval here?
-model.fit(training_queries, validation_queries=validation_queries)
+model.fit(training_queries, validation_queries=test_queries)
 
 logging.info('================================================================================')
 logging.info('%s on the test queries: %.8f'
-             % (model.metric, model.evaluate(validation_queries, n_jobs=-1)))
+             % (model.metric, model.evaluate(test_queries, n_jobs=-1)))
 
 model.save('LambdaMART_L7_S0.1_E50_' + model.metric)
 predicted_rankings = model.predict_rankings(test_queries)
@@ -66,4 +66,4 @@ test_df['pred_position'] = np.concatenate(predicted_rankings)
 sorted_df = test_df[['srch_id', 'prop_id', 'pred_position']].sort_values(['srch_id', 'pred_position'])
 
 submission = pd.DataFrame({ 'SearchId': sorted_df.srch_id, 'PropertyId': sorted_df.prop_id })[['SearchId', 'PropertyId']]
-submission.to_csv('model_%d_%f.csv' % (test_queries.document_count(), model.evaluate(validation_queries, n_jobs=-1)), index=False)
+submission.to_csv('model_%d_%f.csv' % (test_queries.document_count(), model.evaluate(test_queries, n_jobs=-1)), index=False)
