@@ -15,9 +15,9 @@ from rankpy.models import LambdaMART
 logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.INFO)
 
 # Load the query datasets.
-training_queries = Queries.load_from_text('train.svmlight')
-validation_queries = Queries.load_from_text('vali.svmlight')
-test_queries = Queries.load_from_text('test.svmlight')
+training_queries = Queries.load_from_text('train_without_means.svmlight')
+validation_queries = Queries.load_from_text('vali_without_means.svmlight')
+test_queries = Queries.load_from_text('test_without_means.svmlight')
 
 logging.info('================================================================================')
 
@@ -48,17 +48,17 @@ logging.info('Test queries: %s' % test_queries)
 logging.info('================================================================================')
 
 model = LambdaMART(metric='nDCG@38', max_leaf_nodes=7, shrinkage=0.1,
-                   estopping=4, n_jobs=-1, min_samples_leaf=50,
+                   estopping=10, n_jobs=-1, min_samples_leaf=50,
                    random_state=42)
 
 #TODO: do some crossval here?
-model.fit(training_queries, validation_queries=validation_queries)
+model.fit(train_queries, validation_queries=test_queries)
 
 logging.info('================================================================================')
 logging.info('%s on the test queries: %.8f'
-             % (model.metric, model.evaluate(validation_queries, n_jobs=-1)))
+             % (model.metric, model.evaluate(test_queries, n_jobs=-1)))
 
-model.save('LambdaMART_L7_S0.1_E50_' + model.metric)
+model.save('LambdaMART_L7_S0.1_E50_without_' + model.metric)
 predicted_rankings = model.predict_rankings(test_queries)
 
 test_df = pd.read_csv("../test_set_VU_DM_2014.csv", header=0, nrows = test_queries.document_count())
@@ -66,4 +66,4 @@ test_df['pred_position'] = np.concatenate(predicted_rankings)
 sorted_df = test_df[['srch_id', 'prop_id', 'pred_position']].sort_values(['srch_id', 'pred_position'])
 
 submission = pd.DataFrame({ 'SearchId': sorted_df.srch_id, 'PropertyId': sorted_df.prop_id })[['SearchId', 'PropertyId']]
-submission.to_csv('model_%d_%f.csv' % (test_queries.document_count(), model.evaluate(validation_queries, n_jobs=-1)), index=False)
+submission.to_csv('model_%d2_%f.csv' % (test_queries.document_count(), model.evaluate(test_queries, n_jobs=-1)), index=False)

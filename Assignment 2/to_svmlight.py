@@ -64,7 +64,7 @@ def preprocess(df, train):
 
 
 nrows = None
-# nrows = int(1e5)
+#nrows = int(1e5)
 data_train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, parse_dates=[1], nrows=nrows)
 try:
     data_test = pd.read_csv("testsetnew.csv", header=0, parse_dates=[1], nrows=nrows)
@@ -73,11 +73,23 @@ except IOError:
 
 print("loaded csv's")
 
+# pre-fill missing prop_location_score2 scores with first quartile of country:
+# source Bing Xu et al (forth place)
+all_data = pd.concat([data_train, data_test], copy=False)
+location_quartile = all_data.groupby("prop_country_id")["prop_location_score2"].quantile(q=0.25)
+
+for d in (data_train, data_test):
+    d["prop_location_score2_quartile"] = location_quartile[d.prop_id].values
+    d["prop_location_score2"].fillna(d["prop_location_score2_quartile"])
+    del d["prop_location_score2_quartile"]
+    
+
 # fill missing values with worst case scenario. Source: Jun Wang 3rd place
 # ["prop_review_score", "prop_location_score2", "orig_destination_distance"]
 data_train = data_train.fillna(value=-1)
 data_test = data_test.fillna(value=-1)
 
+"""
 # feature engineering using all numeric features
 # avg/median/std numeric features per prop_id
 numeric_features = ["prop_starrating", "prop_review_score", "prop_location_score1", "prop_location_score2"]
@@ -91,7 +103,8 @@ for label in numeric_features:
     for d in (data_train, data_test):
         d[label + "_mean"] = mean[d.prop_id].values
         d[label + "_median"] = median[d.prop_id].values
-        d[label + "_mean"] = std[d.prop_id].values
+        d[label + "_std"] = std[d.prop_id].values
+        """
 
 
 train, Xtr, qtr, ytr, feature_labels = preprocess(data_train[data_train.srch_id % 10 != 0], train=True)
@@ -115,6 +128,6 @@ p = Pool()
 # dump_svmlight_file(Xtr, ytr, 'spelen/train.svmlight', query_id=qtr, comment=comment)
 # dump_svmlight_file(Xva, yva, 'spelen/vali.svmlight', query_id=qva, comment=comment)
 # dump_svmlight_file(Xte, np.zeros(len(data_test)), 'spelen/test.svmlight', query_id=qte, comment=comment)
-p.map(dump, ((Xtr, ytr, 'spelen/train.svmlight', qtr, comment),
-             (Xva, yva, 'spelen/vali.svmlight', qva, comment),
-             (Xte, yte, 'spelen/test.svmlight', qte, comment)))
+p.map(dump, ((Xtr, ytr, 'spelen/train_without_means.svmlight', qtr, comment),
+             (Xva, yva, 'spelen/vali_without_means.svmlight', qva, comment),
+             (Xte, yte, 'spelen/test_without_means.svmlight', qte, comment)))

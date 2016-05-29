@@ -8,14 +8,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib import colors
 
-train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, parse_dates=[1])
+nrows = None
+train = pd.read_csv("training_set_VU_DM_2014.csv", header=0, nrows=nrows, parse_dates=[1])
+train["prop_log_historical_price"] = train.prop_log_historical_price.replace(0.0, np.nan)
+train["prop_historical_price"] = (np.e ** train["prop_log_historical_price"])
 nrows = train.shape[0]
 
 # create a nice plot with x-axis the features, and y-axis the percentage of missing data
 def barplot():
-    fig, ax = plt.subplots(figsize=(1200/80, 500/80))
+    fig, ax = plt.subplots(figsize=(1200/120, 500/120))
     d = train.isnull().sum().to_dict()
-    items = sorted(d.items(), key=lambda kv: kv[1])
+    items = sorted(d.items(), key=lambda kv: (kv[1],kv[0]))
 
     bp = sns.barplot(map(lambda kv: kv[0], items),
                      map(lambda kv: 100*kv[1]/nrows, items),
@@ -25,25 +28,33 @@ def barplot():
     for item in bp.get_xticklabels():
         item.set_rotation(90)
 
-    plt.subplots_adjust(bottom=0.4)
+    plt.subplots_adjust(bottom=0.5)
     plt.savefig("barplot", dpi=400)
 
 def outliers():
-    cols = ['visitor_hist_adr_usd', 'price_usd', 'gross_bookings_usd', 'orig_destination_distance', 
-            'comp1_rate_percent_diff',
-            'comp2_rate_percent_diff',
-            'comp3_rate_percent_diff',
+    cols = [
+            'prop_location_score2', 
+            'prop_location_score1', 
+            'comp1_rate_percent_diff', 
             'comp4_rate_percent_diff',
-            'comp5_rate_percent_diff',
-            'comp6_rate_percent_diff',
-            'comp7_rate_percent_diff',
-            'comp8_rate_percent_diff']
-    fig, axarr = plt.subplots(2, sharex=True, figsize=(1200/80, 500/80))
+            'srch_booking_window',
+            'price_usd', 
+            'visitor_hist_adr_usd', 
+            'prop_historical_price', 
+            'gross_bookings_usd', 
+            'orig_destination_distance', 
+            ]
+    fig, axarr = plt.subplots(figsize=(1200/120, 300/120))
     #ax = train[cols].boxplot(rot=90, return_type="axes", sym='k.', showfliers=True)
-    ax = sns.boxplot(train[cols], orient='h', whis=0.1, ax=axarr[0], fliersize=2)
+    """
+    train[cols].boxplot(vert=False, sym='k.')
+    plt.xscale('log')
+    """
+    vals = [x.dropna() for y,x in train[cols].iteritems()]
+    ax = sns.boxplot(train[cols], orient='h', fliersize=2)
     ax.set_xscale('log')
-    ax = sns.boxplot(train[cols], orient='h', ax=axarr[1], fliersize=2)
-    ax.set_xscale('log')
+    plt.xlim(xmin=1e-4)
+    plt.subplots_adjust(left=0.3, bottom=0.1)
     plt.savefig("outliers", dpi=400)
 
 def dateplot():
@@ -55,13 +66,13 @@ def dateplot():
         else:
             return ''
 
-    df2 = train[train.booking_bool == 1]
+    df2 = train
 
     dates = [(a.year, a.month, a.day) for a in df2.date_time]
     c = sorted(Counter(dates).items(), key=lambda kv: kv[0][0]*10000 + kv[0][1]*100 + kv[0][2])
     datesort = [kv[0][0]*10000 + kv[0][1]*100 + kv[0][2] for kv in c]
     names = [name(x) for x,y in c]
-    fig, axarr = plt.subplots(2, sharex=True, figsize=(1200/80, 500/80))
+    fig, axarr = plt.subplots(2, sharex=True, figsize=(1200/120, 500/120))
     palette = sns.color_palette('hls', n_colors=12)
     clrs = [palette[d[0][1]-1] for d in c]
     bp1 = sns.barplot(datesort, [y for x,y in c], palette = clrs, ax=axarr[0], linewidth=0)
