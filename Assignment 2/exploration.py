@@ -33,16 +33,16 @@ def barplot():
 
 def outliers():
     cols = [
-            'prop_location_score2', 
-            'prop_location_score1', 
-            'comp1_rate_percent_diff', 
+            'prop_location_score2',
+            'prop_location_score1',
+            'comp1_rate_percent_diff',
             'comp4_rate_percent_diff',
             'srch_booking_window',
-            'price_usd', 
-            'visitor_hist_adr_usd', 
-            'prop_historical_price', 
-            'gross_bookings_usd', 
-            'orig_destination_distance', 
+            'price_usd',
+            'visitor_hist_adr_usd',
+            'prop_historical_price',
+            'gross_bookings_usd',
+            'orig_destination_distance',
             ]
     fig, axarr = plt.subplots(figsize=(1200/120, 300/120))
     #ax = train[cols].boxplot(rot=90, return_type="axes", sym='k.', showfliers=True)

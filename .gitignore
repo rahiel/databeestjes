@@ -2,3 +2,4 @@
 *.xlsx
 *.pdf
 *.png
+node_modules
