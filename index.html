@@ -34,7 +34,8 @@
           <section>
               <h1>Overview</h1>
               <ul>
-                  <li>Learn from the Best</li>
+                  <li>Strategy</li>
+                  <li>Implementation</li>
                   <ul>
                       <li>LambdaMART</li>
                       <li>Feature Engineering</li>
@@ -44,21 +45,65 @@
           </section>
 
           <section>
+              <section>
+                  <h1>Strategy</h1>
+              </section>
+
               <section data-background="images/Orion_aveugle_cherchant_le_soleil.jpg">
                   <br><br><br><br><br><br><br><br>
                   <small><i>Blind Orion Searching for the Rising Sun</i> by Nicolas Poussin</small>
               </section>
 
-              <section data-background="images/Orion_aveugle_cherchant_le_soleil.jpg">
+              <section data-background="images/Orion_aveugle_cherchant_le_soleil.jpg" data-transition="slide-in fade-out">
                   <h1>Learn from the Best</h1>
                   <img class="fragment" data-src="images/related-work.png">
               </section>
 
-              <section data-background="images/lambda_logo.svg" data-transition-speed="fast">
+              <section data-background="images/lambda_logo.svg" data-transition="fade-in slide-out" data-background-size="2000px">
                   <h1>LambdaMART</h1>
                   <img data-src="images/related-work.png">
               </section>
+          </section>
 
+          <section>
+              <section>
+                  <h1>Implementation</h1>
+              </section>
+
+              <section data-background="images/python.png" data-background-color="#1e425f" data-background-size="1400px" data-transition="zoom">
+              </section>
+
+              <section data-background="images/sicp.jpg" data-background-size="1000px" data-transition="slide">
+                  <h1>Magic</h1>
+                  <pre class="fragment""><code data-trim data-noescape>
+from rankpy.models import LambdaMART
+
+model = LambdaMART(
+    metric='nDCG@38', max_leaf_nodes=7, shrinkage=0.1,
+    estopping=10, n_jobs=-1, min_samples_leaf=50,
+    random_state=42
+)
+                  </code></pre>
+                  <br>
+                  <img class="fragment" data-src="images/pandas.png">
+              </section>
+
+              <section>
+                  <h1>Feature Engineering</h1>
+              </section>
+
+              <section>
+                  <ul>
+                      <li>feature</li>
+                  </ul>
+              </section>
+
+          </section>
+
+          <section>
+              <section>
+                  <h1>Results</h1>
+              </section>
           </section>
 
 			</div>
