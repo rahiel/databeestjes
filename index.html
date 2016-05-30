@@ -4,13 +4,14 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+    <title>Databeestjes</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/black.css">
+    <link rel="stylesheet" href="style.css">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+    <link rel="stylesheet" href="lib/css/monokai-sublime.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -24,8 +25,42 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+          <section>
+              <h1><span style="color: #db5e56";>D</span><span style="color: #db8d56";>a</span><span style="color: #dbbc56";>t</span><span style="color: #cbdb56";>a</span><span style="color: #9cdb56";>b</span><span style="color: #6ddb56";>e</span><span style="color: #56db6e";>e</span><span style="color: #56db9d";>s</span><span style="color: #56dbcb";>t</span><span style="color: #56bbdb";>j</span><span style="color: #568ddb";>e</span><span style="color: #565edb";>s</span><span style="color: #7d56db";> </span><span style="color: #ac56db";>-</span><span style="color: #db56db";> </span><span style="color: #db56ac";>9</span><span style="color: #db567d";>1</span></h1>
+              <p>Jan Westerdiep, Rahiel Kasim and Jaro Camphuijsen</p>
+              <p>How we <span style="color: green;">won</span>/<span style="color: red;">lost</span> the data mining competition</p>
+          </section>
+
+          <section>
+              <h1>Overview</h1>
+              <ul>
+                  <li>Learn from the Best</li>
+                  <ul>
+                      <li>LambdaMART</li>
+                      <li>Feature Engineering</li>
+                  </ul>
+                  <li>Results</li>
+              </ul>
+          </section>
+
+          <section>
+              <section data-background="images/Orion_aveugle_cherchant_le_soleil.jpg">
+                  <br><br><br><br><br><br><br><br>
+                  <small><i>Blind Orion Searching for the Rising Sun</i> by Nicolas Poussin</small>
+              </section>
+
+              <section data-background="images/Orion_aveugle_cherchant_le_soleil.jpg">
+                  <h1>Learn from the Best</h1>
+                  <img class="fragment" data-src="images/related-work.png">
+              </section>
+
+              <section data-background="images/lambda_logo.svg" data-transition-speed="fast">
+                  <h1>LambdaMART</h1>
+                  <img data-src="images/related-work.png">
+              </section>
+
+          </section>
+
 			</div>
 		</div>
 
@@ -33,18 +68,23 @@
 		<script src="js/reveal.js"></script>
 
 		<script>
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
+		 // More info https://github.com/hakimel/reveal.js#configuration
+		 Reveal.initialize({
+         history: true,
+         math: {
+             mathjax: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js',
+             config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+         },
 
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
+				 // More info https://github.com/hakimel/reveal.js#dependencies
+				 dependencies: [
+					   { src: 'plugin/markdown/marked.js' },
+					   { src: 'plugin/markdown/markdown.js' },
+					   { src: 'plugin/notes/notes.js', async: true },
+             { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+             { src: 'plugin/math/math.js', async: true }
+				 ]
+		 });
 		</script>
 	</body>
 </html>
