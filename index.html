@@ -77,14 +77,15 @@
                   <h1>Magic</h1>
                   <pre class="fragment""><code data-trim data-noescape>
 from rankpy.models import LambdaMART
-
+.
+.
+.
 model = LambdaMART(
     metric='nDCG@38', max_leaf_nodes=7, shrinkage=0.1,
     estopping=10, n_jobs=-1, min_samples_leaf=50,
     random_state=42
 )
                   </code></pre>
-                  <br>
                   <img class="fragment" data-src="images/pandas.png">
               </section>
 
@@ -92,12 +93,35 @@ model = LambdaMART(
                   <h1>Feature Engineering</h1>
               </section>
 
-              <section>
-                  <ul>
-                      <li>feature</li>
-                  </ul>
+              <section data-transition="slide-in fade-out">
+                  <h1>Missing Values</h1>
+                  <img data-src="images/missing_values.png">
               </section>
 
+              <section data-transition="fade-in slide-out">
+                  <h1>Missing Values</h1>
+                  <img data-src="images/missing_values2.png" width="500px"">
+              </section>
+
+              <section>
+                  <h1>Derived Feature(s)</h1>
+                  <small>$$ \mathtt{count\_window} = \mathtt{srch\_room\_count} \times \max(\mathtt{srch\_booking\_window}) + \mathtt{srch\_booking\_window} $$
+                      <br><br><br><br><br><br<br><br><br><br>
+                      <hr>
+                      <p>(5th place) X. Liu, B. Xu, Y. Zhang, Q. Yan, L. Pang, Q. Li, H. Sun, and B. Wang. Combination of Diverse
+                          Ranking Models for Personalized Expedia Hotel Searches.</p>
+                  </small>
+              </section>
+
+              <section>
+                  <h1>Averaged Features</h1>
+                  <p class="fragment">For all searches, group all ratings per hotel and take the average/median/std.</p>
+                  <p class="fragment"">Do this for the <small>$$ \verb|prop_starrating|, \verb|prop_review_score|, \verb|prop_location_score1|, \text{and } \verb|prop_location_score2| $$</small></p>
+                  <br><br><br><br>
+                  <hr>
+                  <small>(1st place) Kaggle inc. Personalize expedia hotel searches - icdm 2013, 2016. [https://www.kaggle.com/c/
+                      expedia-personalized-sort; accessed 11-May-2016].</small>
+              </section>
           </section>
 
           <section>
