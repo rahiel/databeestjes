@@ -21,13 +21,20 @@
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
 	</head>
-	<body>
+  <body>
+      <script>
+       function getScore() {
+           var input = document.getElementById("score");
+           window.final_score = input.value;
+       }
+      </script>
 		<div class="reveal">
 			<div class="slides">
           <section>
               <h1><span style="color: #db5e56";>D</span><span style="color: #db8d56";>a</span><span style="color: #dbbc56";>t</span><span style="color: #cbdb56";>a</span><span style="color: #9cdb56";>b</span><span style="color: #6ddb56";>e</span><span style="color: #56db6e";>e</span><span style="color: #56db9d";>s</span><span style="color: #56dbcb";>t</span><span style="color: #56bbdb";>j</span><span style="color: #568ddb";>e</span><span style="color: #565edb";>s</span><span style="color: #7d56db";> </span><span style="color: #ac56db";>-</span><span style="color: #db56db";> </span><span style="color: #db56ac";>9</span><span style="color: #db567d";>1</span></h1>
               <p>Jan Westerdiep, Rahiel Kasim and Jaro Camphuijsen</p>
               <p>How we <span style="color: green;">won</span>/<span style="color: red;">lost</span> the data mining competition</p>
+              <br><br><span style="font-size: 50px;">Score <br> </span><input type="text" size="10" style="height: 25px; font-size: 30px;", onkeydown="getScore()" id="score">
           </section>
 
           <section>
@@ -153,9 +160,10 @@ model = LambdaMART(
                   <h1><span style="color: #f67088";>R</span><span style="color: #c59331";>e</span><span style="color: #82a831";>s</span><span style="color: #34af89";>u</span><span style="color: #37aaba";>l</span><span style="color: #8096f4";>t</span><span style="color: #f45deb";>s</span></h1>
               </section>
 
-              <section>
+              <section data-state="scoring">
                   <h2>Scores</h2>
                   <img data-src="images/models.png" width="900px"">
+                  <p>Final score: <span id="final_score"></span></p>
               </section>
 
               <section>
@@ -194,6 +202,15 @@ model = LambdaMART(
              { src: 'plugin/math/math.js', async: true }
 				 ]
 		 });
-		</script>
+    </script>
+
+    <script>
+     Reveal.addEventListener('scoring', function() {
+         var final = document.getElementById("final_score");
+         final.innerHTML = window.final_score;
+     }, false );
+    </script>
+
+
 	</body>
 </html>
