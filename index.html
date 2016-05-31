@@ -205,10 +205,30 @@ model = LambdaMART(
     </script>
 
     <script>
+
      Reveal.addEventListener('scoring', function() {
          var final = document.getElementById("final_score");
-         final.innerHTML = window.final_score;
-     }, false );
+         temp_score = 0;
+         d_score = 0.0011;
+         score_acc = 100;
+         function score_step(){
+             if(temp_score < window.final_score){
+                 temp_score = temp_score + d_score;
+                 final.innerHTML = String(temp_score).slice(0,6);
+
+                 score_acc = score_acc - 1;
+                 setTimeout(score_step,score_acc);
+             }
+             else{
+                 final.innerHTML = String(window.final_score);
+             }
+         }
+         score_step();
+
+     }
+                           , false );
+
+
     </script>
 
 
