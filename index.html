@@ -104,10 +104,36 @@ model = LambdaMART(
 
               <section>
                   <h1>Derived Feature(s)</h1>
-                  <small>$$ \mathtt{count\_window} = \mathtt{srch\_room\_count} \times \max(\mathtt{srch\_booking\_window}) + \mathtt{srch\_booking\_window} $$
-                      <br><br><br><br><br><br<br><br><br><br>
+                  <small>$$ \mathtt{count\_window} = \mathtt{srch\_room\_count} \times \max(\mathtt{srch\_booking\_window}) + \mathtt{srch\_booking\_window} $$ [1]
+                      <br><br>
+                      <p>
+                          We convert the timestamp, <span id="timestamp" style="color: green;"></span>, <br> to four additional features: month, week, day and hour: <br>
+                          <span id="month" style="color: Chocolate;"></span>, <span id="week" style="color: CadetBlue;"></span>, <span id="day" style="color: IndianRed;"></span>, <span id="hour" style="color: GoldenRod;"></span>.
+                      </p>
+                      <script>
+                       Date.prototype.getWeek = function() { var onejan = new Date(this.getFullYear(),0,1); return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7); }
+                       var date = new Date();
+                       var stamp = document.getElementById("timestamp");
+                       stamp.innerHTML = String(date);
+                       var month = document.getElementById("month");
+                       var week = document.getElementById("week");
+                       var day = document.getElementById("day");
+                       var hour = document.getElementById("hour");
+                       month.innerHTML = date.getMonth() + 1;
+                       week.innerHTML = date.getWeek() + 1;
+                       day.innerHTML = date.getDay();
+                       hour.innerHTML = date.getHours() + 1;
+
+                       function updateTimestamp() {
+                           var date = new Date();
+                           var stamp = document.getElementById("timestamp");
+                           stamp.innerHTML = String(date);
+                           window.setTimeout(updateTimestamp, 500);
+                       }
+                       updateTimestamp();
+                      </script>
                       <hr>
-                      <p>(5th place) X. Liu, B. Xu, Y. Zhang, Q. Yan, L. Pang, Q. Li, H. Sun, and B. Wang. Combination of Diverse
+                      <p>[1] (5th place) X. Liu, B. Xu, Y. Zhang, Q. Yan, L. Pang, Q. Li, H. Sun, and B. Wang. Combination of Diverse
                           Ranking Models for Personalized Expedia Hotel Searches.</p>
                   </small>
               </section>
